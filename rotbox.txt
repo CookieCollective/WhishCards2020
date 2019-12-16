@@ -1,0 +1,24 @@
+https://www.shadertoy.com/view/tt33DM
+
+By NuSan
+
+#define rot(angle) mat2(cos(angle),sin(angle),-sin(angle),cos(angle))
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    vec2 uv = (fragCoord-iResolution.xy*0.5)/iResolution.y;
+    vec3 p = vec3(0,0,-10);
+    vec3 r = normalize(vec3(uv,1.0+sin(iTime)*0.5));
+    for(int i=0;i<60;++i) {
+        vec3 p2 = p;
+        for(float j=0.0; j<8.0; ++j) {
+            float t = iTime * 0.4 + j;
+            p2.xy *= rot(t);
+            p2.yz *= rot(t*0.7+sin(t*4.0));
+            p2.x = abs(p2.x)-0.8;
+        }
+        float d = max(max(abs(p2.x),abs(p2.y))-0.7,abs(p2.z)-0.2);
+        if(d < 0.001 || d > 100.0) break;
+        p += d*r;
+        fragColor += vec4(1,0.7-abs(uv.y),abs(uv.x),0) * 0.05/(0.8+abs(d));
+    }
+}
